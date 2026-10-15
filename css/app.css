@@ -57,6 +57,12 @@ canvas {
     pointer-events: none;
 }
 
+#overlay-image {
+    max-width: 200px;
+    max-height: 200px;
+    margin-bottom: 24px;
+}
+
 #start-button {
     padding: 14px 36px;
     font-size: 16px;
