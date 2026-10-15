@@ -58,8 +58,8 @@ canvas {
 }
 
 #overlay-image {
-    max-width: 200px;
-    max-height: 200px;
+    max-width: 500px;
+    max-height: 500px;
     margin-bottom: 24px;
 }
 
