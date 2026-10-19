@@ -7,6 +7,9 @@
 	<meta name="generator" content="Three.js Editor">
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	<link rel="stylesheet" href="css/app.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 	<script type="importmap">
 	{
@@ -22,9 +25,97 @@
 		import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/loaders/GLTFLoader.js';
 		window.ThreeGLTFLoader = GLTFLoader;
 	</script>
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
 </head>
 
 <body ontouchstart="">
+
+		<div class="container-fluid vh-100 position-absolute">
+
+			<!-- Modal -->
+			<div class="modal fade" id="modalM" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="exampleModalLabel">Felicidades</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							Conseguiste la mora
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid vh-100 position-absolute">
+
+			<!-- Modal -->
+			<div class="modal fade" id="modalF" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="exampleModalLabel">Felicidades</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							Conseguiste la fresa
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid vh-100 position-absolute">
+
+			<!-- Modal -->
+			<div class="modal fade" id="modalU" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="exampleModalLabel">Felicidades</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							Conseguiste la uva
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid vh-100 position-absolute">
+
+			<!-- Modal -->
+			<div class="modal fade" id="modalA" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="exampleModalLabel">Felicidades</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							Conseguiste los arandanos
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 
 	<div id="ar-container"></div>
 
@@ -164,6 +255,35 @@
 		});
 
 	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+	<script>
+		function Mora(){
+		let mymodalM = document.getElementById("modalM")
+		let modal = bootstrap.Modal.getOrCreateInstance(mymodalM);
+		modal.show();
+		}
+
+		function Fresa(){
+		let mymodalF = document.getElementById("modalF")
+		let modal = bootstrap.Modal.getOrCreateInstance(mymodalF);
+		modal.show();
+		}
+
+		function Uva(){
+		let mymodalU = document.getElementById("modalU")
+		let modal = bootstrap.Modal.getOrCreateInstance(mymodalU);
+		modal.show();
+		}
+
+		function Arandano(){
+		let mymodalA = document.getElementById("modalA")
+		let modal = bootstrap.Modal.getOrCreateInstance(mymodalA);
+		modal.show();
+		}
+	</script>
+
 </body>
 
 </html>
