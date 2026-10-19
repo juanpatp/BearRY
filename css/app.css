@@ -1,5 +1,6 @@
 body {
-    font-family: sans-serif;
+    font-family: 'Poppins', sans-serif;
+    --bs-body-font-family: 'Poppins', sans-serif;
     font-size: 11px;
     background-color: #000;
     margin: 0px;
@@ -105,4 +106,14 @@ canvas {
     margin-top: 10px;
     font-size: 13px;
     color: #ccc;
+}
+
+.modal-content {
+  	background-color: #FFF2D6;
+    color: #825805;
+}
+
+.btn-primary {
+ 	background-color: #FF3549;
+  	color: #FFF2D6;
 }
