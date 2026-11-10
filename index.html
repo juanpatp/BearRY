@@ -1,214 +1,130 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
-	<title>Experiencias AR</title>
+	<title></title>
 	<meta charset="utf-8">
+	<meta name="generator" content="Three.js Editor">
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-	<!--
-		Un solo importmap para las dos experiencias:
-		- AR con imagen (MindAR): "three" apunta a ./js/three.compat.js, como en el index original.
-		- Filtro facial (MediaPipe): sus modulos usan three@0.181.1 del CDN. El "scope" hace que
-		  los archivos de three@0.181.1 (p. ej. GLTFExporter) reciban esa misma version al pedir "three".
-	-->
 	<script type="importmap">
 	{
 		"imports": {
 			"three": "./js/three.compat.js",
 			"three/addons/": "./js/addons/",
 			"mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
-		},
-		"scopes": {
-			"https://cdn.jsdelivr.net/npm/three@0.181.1/": {
-				"three": "https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js"
-			},
-			"./mediapipe_face/": {
-				"three": "https://cdn.jsdelivr.net/npm/three@0.181.1/build/three.module.js",
-				"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.181.1/examples/jsm/"
-			}
 		}
 	}
 	</script>
 
+	<script type="module">
+		import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/loaders/GLTFLoader.js';
+		window.ThreeGLTFLoader = GLTFLoader;
+	</script>
+
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
-	<!-- Estilos del proyecto AR (en esta carpeta está en la raíz; en el proyecto original es css/app.css) -->
-	<link rel="stylesheet" href="app.css">
-
-	<style>
-		/* ---------- Portada (correcciones de index-corregido.html) ---------- */
-		#overlay {
-			padding: 24px 16px;
-			box-sizing: border-box;
-		}
-
-		#overlay-image {
-			width: min(80vw, 500px);
-			max-width: 100%;
-			height: auto;
-			max-height: 50vh;
-			object-fit: contain;
-		}
-
-		#progress-container {
-			margin-top: 32px;
-		}
-
-		/* ---------- Menú: dos botones con el estilo de #start-button ---------- */
-		#mode-menu {
-			display: flex;
-			flex-direction: column;
-			gap: 12px;
-			width: min(80vw, 300px);
-		}
-
-		.mode-button {
-			padding: 14px 24px;
-			font-size: 16px;
-			font-weight: bold;
-			color: #FFF2D6;
-			background-color: #FF3549;
-			border: none;
-			border-radius: 30px;
-			cursor: pointer;
-		}
-
-		.mode-button.secondary {
-			color: #4C2FFF;
-			background-color: #FFF2D6;
-		}
-
-		.mode-button:active {
-			background-color: #000;
-			color: #FFF2D6;
-		}
-
-		.mode-button:disabled {
-			opacity: 0.5;
-			cursor: default;
-		}
-
-		@media (max-height: 560px) {
-			#overlay-image { max-height: 35vh; margin-bottom: 12px; }
-			#mode-menu { flex-direction: row; width: min(90vw, 480px); }
-			.mode-button { flex: 1; }
-			#progress-container { margin-top: 16px; }
-		}
-
-		/* ---------- Filtro facial (de mediapipe_face/css/app.css) ---------- */
-		#app {
-			display: none;
-			position: fixed;
-			inset: 0;
-			overflow: hidden;
-			background: #000;
-		}
-
-		body.mode-face #app { display: block; }
-		body.mode-face #ar-container { display: none; }
-
-		/* Video y ayudas 2D en espejo, como un espejo real */
-		#video-renderer,
-		#canvas-renderer {
-			position: absolute;
-			inset: 0;
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			transform: scaleX(-1);
-		}
-
-		#log:empty { display: none; }
-	</style>
+	<link rel="stylesheet" href="css/app.css">
+	
 </head>
 
 <body ontouchstart="">
 
-	<!-- ---------- Ventanas de frutas (las abren los scripts de la escena con Mora(), Fresa(), ...) ---------- -->
-	<div class="modal fade" id="modalM" tabindex="-1" aria-labelledby="modalM-title" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="modalM-title">Felicidades</h1>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-				</div>
-				<div class="modal-body">Conseguiste la mora</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+		<div class="container-fluid vh-100 position-absolute">
+
+			<!-- Modal -->
+			<div class="modal fade" id="modalM" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="exampleModalLabel">Felicidades</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							Conseguiste la mora
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="modal fade" id="modalF" tabindex="-1" aria-labelledby="modalF-title" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="modalF-title">Felicidades</h1>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-				</div>
-				<div class="modal-body">Conseguiste la fresa</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+		<div class="container-fluid vh-100 position-absolute">
+
+			<!-- Modal -->
+			<div class="modal fade" id="modalF" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="exampleModalLabel">Felicidades</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							Conseguiste la fresa
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="modal fade" id="modalU" tabindex="-1" aria-labelledby="modalU-title" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="modalU-title">Felicidades</h1>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-				</div>
-				<div class="modal-body">Conseguiste la uva</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+		<div class="container-fluid vh-100 position-absolute">
+
+			<!-- Modal -->
+			<div class="modal fade" id="modalU" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="exampleModalLabel">Felicidades</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							Conseguiste la uva
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="modal fade" id="modalA" tabindex="-1" aria-labelledby="modalA-title" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="modalA-title">Felicidades</h1>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-				</div>
-				<div class="modal-body">Conseguiste los arándanos</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+		<div class="container-fluid vh-100 position-absolute">
+
+			<!-- Modal -->
+			<div class="modal fade" id="modalA" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="exampleModalLabel">Felicidades</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							Conseguiste los arandanos
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yay</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<!-- ---------- Contenedor de AR con imagen (MindAR) ---------- -->
+
 	<div id="ar-container"></div>
 
-	<!-- ---------- Contenedor del filtro facial (MediaPipe) ---------- -->
-	<div id="app">
-		<video id="video-renderer"></video>
-		<canvas id="canvas-renderer"></canvas>
-	</div>
+	<div class="log" id="log">asdasdsa</div>
 
-	<div class="log" id="log"></div>
-
-	<!-- ---------- Portada con menú ---------- -->
 	<div id="overlay">
-		<img id="overlay-image" src="assets/Images/berro.png" alt="">
-
-		<div id="mode-menu">
-			<button type="button" class="mode-button" id="start-ar">AR con imagen</button>
-			<button type="button" class="mode-button secondary" id="start-face">Filtro facial</button>
-		</div>
-
+		<img id="overlay-image" src="assets/Images/berro.png" alt=""> 
+		<button id="start-button">Iniciar</button>
 		<div id="progress-container">
 			<div id="progress-bar-track">
 				<div id="progress-bar-fill"></div>
@@ -219,68 +135,39 @@
 
 	<script type="module">
 
-		// Cada experiencia carga sus modulos solo cuando se elige (import dinamico).
-		// Asi no se descargan las dos y no chocan entre si (cada una define su propio window.THREE).
+		import * as THREE from './js/three.module.js';
+		import { APP } from './js/app.js';
+		import { MindARController } from './js/mindar/mindar_controller.js';
+
+		window.THREE = THREE; // Used by APP Scripts.
 
 		const log = document.getElementById('log');
 		const overlay = document.getElementById('overlay');
-		const arButton = document.getElementById('start-ar');
-		const faceButton = document.getElementById('start-face');
+		const startButton = document.getElementById('start-button');
 		const arContainer = document.getElementById('ar-container');
 		const progressContainer = document.getElementById('progress-container');
 		const progressFill = document.getElementById('progress-bar-fill');
 		const progressLabel = document.getElementById('progress-label');
 
-		const params = new URLSearchParams(location.search);
-		const debugMode = params.get('debug') === '1';
+		const debugMode = new URLSearchParams(location.search).get('debug') === '1';
 
-		// Escena del filtro facial. Para probar otra: index-unido.html?json=mediapipe_face/otra.json
-		const FACE_SCENE = params.get('json') || 'mediapipe_face/appF.json';
+		let player = null;
+		let mindarController = null;
+		let loaded = false;
+		let loadPromise = null;
 
 		function setProgress(percent, text) {
 			progressFill.style.width = `${percent}%`;
 			progressLabel.textContent = `${text} ${percent}%`;
 		}
 
-		function setMenuEnabled(enabled) {
-			arButton.disabled = !enabled;
-			faceButton.disabled = !enabled;
-		}
+		async function loadEverything() {
 
-		function hideOverlay() {
-			overlay.classList.add('hidden');
-			setTimeout(() => overlay.remove(), 400);
-		}
+			if (loadPromise) return loadPromise;
 
-		function showError(text, error) {
-			console.error(text, error);
-			setProgress(0, `${text}. Pulsa de nuevo para reintentar.`);
-			setMenuEnabled(true);
-		}
-
-		// ===================== AR con imagen (MindAR) =====================
-
-		let player = null;
-		let arLoadPromise = null;
-
-		function loadAR() {
-
-			if (arLoadPromise) return arLoadPromise;
-
-			arLoadPromise = (async () => {
+			loadPromise = (async () => {
 
 				setProgress(0, 'Cargando escena...');
-
-				const THREE = await import('./js/three.module.js');
-				const { APP } = await import('./js/app.js');
-				window.THREE = THREE; // Usado por los scripts de APP.
-
-				try {
-					const { GLTFLoader } = await import('https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/loaders/GLTFLoader.js');
-					window.ThreeGLTFLoader = GLTFLoader;
-				} catch (e) {
-					console.warn('No se pudo cargar GLTFLoader:', e);
-				}
 
 				// Descarga app.json con progreso real (0% - 25%)
 				const text = await new Promise((resolve, reject) => {
@@ -290,7 +177,8 @@
 						(t) => resolve(t),
 						(e) => {
 							if (e.lengthComputable) {
-								setProgress(Math.round((e.loaded / e.total) * 25), 'Cargando escena...');
+								const p = Math.round((e.loaded / e.total) * 25);
+								setProgress(p, 'Cargando escena...');
 							}
 						},
 						(err) => reject(new Error(err.statusText || 'No se pudo descargar el json'))
@@ -304,31 +192,45 @@
 				setProgress(55, 'Escena lista...');
 
 				document.body.appendChild(player.dom);
-				window.addEventListener('resize', () => player.setSize(window.innerWidth, window.innerHeight));
+
+				window.addEventListener('resize', function () {
+					player.setSize(window.innerWidth, window.innerHeight);
+				});
+
 				window.player = player;
 
 				setProgress(85, 'Preparando AR...');
+				log.textContent = 'initializing...';
+
+				await new Promise((resolve) => setTimeout(resolve, 10));
+
+				setProgress(100, 'Listo');
+				loaded = true;
+
+				console.log(window.player);
 
 			})().catch((e) => {
-				arLoadPromise = null; // permite reintentar
+				loaded = false;
+				loadPromise = null; // permite reintentar al pulsar el botón
 				throw e;
 			});
 
-			return arLoadPromise;
+			return loadPromise;
 		}
 
-		arButton.addEventListener('click', async () => {
+		// Al darle al botón start se inicia la cámara (requiere gesto del usuario).
+		startButton.addEventListener('click', async () => {
 
-			setMenuEnabled(false);
 			progressContainer.style.display = 'flex';
 
 			try {
-				await loadAR();
+				await loadEverything();
+				if (!loaded) return;
 
 				setProgress(90, 'Iniciando cámara...');
 
-				const { MindARController } = await import('./js/mindar/mindar_controller.js');
-				const mindarController = new MindARController(arContainer, player, debugMode);
+				// La cámara se inicia aquí, dentro del gesto del usuario.
+				mindarController = new MindARController(arContainer, player, debugMode);
 				window.mindarController = mindarController;
 
 				await mindarController.start();
@@ -336,34 +238,21 @@
 				// El player sigue funcionando (scripts/audio) pero su canvas ya no se usa.
 				if (player?.dom) player.dom.style.display = 'none';
 
-				setProgress(100, 'Listo');
-				hideOverlay();
+				overlay.classList.add('hidden');
+				setTimeout(() => overlay.remove(), 400);
 			} catch (e) {
-				showError('Error al iniciar AR con imagen', e);
+				console.error('Error durante la carga:', e);
+				startButton.textContent = 'Reintentar';
+				setProgress(0, 'Error al iniciar');
 			}
 		});
 
-		// ===================== Filtro facial (MediaPipe) =====================
-
-		faceButton.addEventListener('click', async () => {
-
-			setMenuEnabled(false);
+		// Todo se carga automáticamente al abrir la página.
+		loadEverything().catch((e) => {
+			console.error('Error durante la carga automática:', e.message);
 			progressContainer.style.display = 'flex';
-			document.body.classList.add('mode-face'); // el contenedor debe verse para medir su tamaño
-
-			try {
-				setProgress(10, 'Cargando filtro facial...');
-				const { startFaceFilter } = await import('./mediapipe_face/js/mediapipe/mediapipe_controller.js');
-
-				setProgress(40, 'Iniciando cámara y detección de cara...');
-				await startFaceFilter(FACE_SCENE);
-
-				setProgress(100, 'Listo');
-				hideOverlay();
-			} catch (e) {
-				document.body.classList.remove('mode-face');
-				showError('Error al iniciar el filtro facial', e);
-			}
+			setProgress(0, 'Error al cargar');
+			startButton.textContent = 'Reintentar';
 		});
 
 	</script>
@@ -371,15 +260,29 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
 	<script>
-		// Abren las ventanas de frutas. Las pueden llamar los scripts de cualquiera de las dos escenas.
-		function showModal(id) {
-			bootstrap.Modal.getOrCreateInstance(document.getElementById(id)).show();
+		function Mora(){
+		let mymodalM = document.getElementById("modalM")
+		let modal = bootstrap.Modal.getOrCreateInstance(mymodalM);
+		modal.show();
 		}
 
-		function Mora() { showModal('modalM'); }
-		function Fresa() { showModal('modalF'); }
-		function Uva() { showModal('modalU'); }
-		function Arandano() { showModal('modalA'); }
+		function Fresa(){
+		let mymodalF = document.getElementById("modalF")
+		let modal = bootstrap.Modal.getOrCreateInstance(mymodalF);
+		modal.show();
+		}
+
+		function Uva(){
+		let mymodalU = document.getElementById("modalU")
+		let modal = bootstrap.Modal.getOrCreateInstance(mymodalU);
+		modal.show();
+		}
+
+		function Arandano(){
+		let mymodalA = document.getElementById("modalA")
+		let modal = bootstrap.Modal.getOrCreateInstance(mymodalA);
+		modal.show();
+		}
 	</script>
 
 </body>
