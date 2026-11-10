@@ -1,3 +1,4 @@
+
 body {
     font-family: 'Poppins', sans-serif;
     --bs-body-font-family: 'Poppins', sans-serif;
@@ -51,6 +52,7 @@ canvas {
     color: #fff;
     z-index: 2000;
     transition: opacity 0.4s ease;
+    gap: 10px;
 }
 
 #overlay.hidden {
@@ -59,6 +61,7 @@ canvas {
 }
 
 #overlay-image {
+    width: 80%;
     max-width: 500px;
     max-height: 500px;
     margin-bottom: 24px;
@@ -76,6 +79,21 @@ canvas {
 }
 
 #start-button:active {
+    background-color:  #000;
+}
+
+#button2 {
+    padding: 14px 36px;
+    font-size: 16px;
+    font-weight: bold;
+    color:  #FF3549;
+    background-color: #FFF2D6;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+#button2:active {
     background-color:  #000;
 }
 

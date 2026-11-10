@@ -12,8 +12,8 @@
 
 import GUI from "https://cdn.jsdelivr.net/npm/lil-gui@0.20.0/+esm";
 
-import WebCamera from "../webcamera.js";
-import ThreePlayer from "../app.js";
+import WebCamera from "../webcameraF.js";
+import ThreePlayer from "../appF.js";
 import MPFaceTracker from "./mp_face_tracker.js";
 import MPFaceRenderer from "./mp_face_renderer.js";
 import ThreeFaceRenderer from "./three_face_renderer.js";
